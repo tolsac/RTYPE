@@ -268,10 +268,10 @@
          <object idref="Point2D$Double5">
           <void method="setLocation">
            <double>776.0</double>
-           <double>441.0</double>
+           <double>429.0</double>
           </void>
          </object>
-         <double>441.0</double>
+         <double>429.0</double>
         </void>
        </void>
       </object>
@@ -636,7 +636,7 @@
     </void>
     <void property="name">
      <void property="text">
-      <string>ActionManager`</string>
+      <string>ActionManager</string>
      </void>
     </void>
    </object>

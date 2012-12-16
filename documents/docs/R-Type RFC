@@ -1,0 +1,330 @@
+RTYPE Working Group															tolsa_c
+Request for Comments: 0000													boyer_b
+STD: 00																		petit_c
+Obsoletes: 00																clariv_e
+Category: Project															mart_n
+																			andral_l
+																			
+																			
+								Network Protocol for R-Type
+								
+Abstract
+
+	This document describes the network protocol for R-Type Project. It describes how the
+	clients and the server will communicate together. This protocol is only meant for 
+	the communation client-server type.
+	
+Status of this Memo
+
+	This document specifies a standart track protocol for the community of players.
+	Distribution of this memo is unlimited
+	
+Copyright Notice
+	This project is Open-Source.
+	
+
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+
+R-Type Group Project 	 			Standart Track								[Page 1]
+
+							Network Protocol for R-Type
+
+Table of Contents
+
+	1. Introduction.....................................................1
+	2. Protocol header..................................................1
+	3. Conventions......................................................2
+	4. List of commands.................................................2
+		4.1. Client side................................................2
+			4.1.1.  Menu commands - TCP.................................2
+			4.1.2.  InGame commands - UDP...............................3
+		4.2. Server side................................................3
+			4.2.1.  Menu commands - TCP.................................3
+			4.2.2.  InGame commands - UDP...............................4
+	5. Internationalization Considerations..............................5
+	6. Security Considerations..........................................5
+	7. References.......................................................5
+	8. Authors Adresses.................................................5
+				
+	
+	
+
+1.	Introduction
+
+	This document describes the network protocol for R-Type Project. It describes how the
+	clients and the server will communicate together. This protocol is only meant for 
+	the communation client-server type.
+	The protocol
+	
+2.	Protocol header
+	
+	 0               1               2               3				4
+     0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+    +---------------------------------------------------------------+
+    |      0xFE     |      0xE1      |      0xDE      |      0xAD   |
+    |---------------------------------------------------------------|
+    |                          	 Checksum                           |
+    |---------------------------------------------------------------| 
+    |                            TimeStamp                          |
+    |---------------------------------------------------------------|
+    |         Command ID             | 			Data Size	        |
+	|---------------------------------------------------------------|
+	|							   DATA			     				|
+    +---------------------------------------------------------------+
+
+   -   	The first 32 bits are used as a magic number to make sure the
+		packet is conform. (uint32_t)
+
+   -   	The next 32 bits, "Hashcode" to improve security of the packet and to check
+	    the packet integrity. (uint32_t)
+   
+   -	The next 32 bits are used to define the timestamp of the packet, in order
+		to check if the packet is to old, irrelevant. (time_t or ulong)
+   
+   -	The next 16 bits are used for the ID command. It defines the incoming data
+		pattern. (uint16_t)
+   
+   -	The next 16 bits are used for the Data Size. (uint16_t)
+   
+   -	The next XX bits defined by the Data size are reserved for the Strutured
+		Message.
+
+		
+   
+
+   
+   
+R-Type Group Project 	 			Standart Track								[Page 2]
+
+							Network Protocol for R-Type
+   
+3.	Conventions
+
+	The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+	"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+	document are to be interpreted as described in [RFC2119].
+	
+4.	List of commands
+
+4.1		Client side
+
+4.1.1		Menu commands - TCP
+
+	- AUTHENTIFICATION
+
+		The client wants to authentify  
+		ID of command: 000
+		Message: [Login:char[32]]
+
+	- SHOW_ROOM
+		
+		Request of the list of rooms
+		ID of command: 001
+		Message: [empty]
+	
+	- CREATE_ROOM
+		The client create a new room
+		ID of command: 002
+		Message: [NameRoom:char[32]][NumberOfMaxPlayers:int][Difficulty:int][IDMap:int]
+		
+	- JOIN_ROOM
+		The client joinss the room
+		ID of command: 003
+		Message: [IDRoom:int]
+	
+	- LEAVE_ROOM
+		The client leave the room
+		ID of command: 004
+		Message: [empty]
+	
+	- LAUNCH_GAME
+		The client, owner of the room start the game
+		ID of command: 005
+		Message: [IDRoom:int]
+
+R-Type Group Project 	 			Standart Track								[Page 3]
+
+							Network Protocol for R-Type
+
+4.1.2		InGame commands - UDP
+
+	- MOVEMENT
+		The client moves
+		Id of command: 100
+		Message: [PosX:int][PosY:int][MovementType:int]
+	
+	- SHOOTING
+		The client shoot
+		ID of command: 101
+		Message: [IDGun:int]
+	
+	- ASK_DESCRIBE_ENTITY
+		The client ask to describe an entity
+		ID of command: 102
+		Message: [IDEntity:int]
+
+	- ASK_PLAYER_SCORE
+		The client ask a players' score
+		ID of command: 103
+		Message: [IDEntity:int]
+		
+	- ASK_PLAYER_LIFE
+		The client ask a players' life
+		ID of command: 104
+		Message: [IDEntity:int]
+		
+4.2		Server side
+
+4.2.1		Menu commands - TCP
+
+	- AUTHENTIFICATION_OK
+		Success of the authentification
+		ID of command: 200
+		Message: [empty]
+
+	- AUTHENTIFICATION_KO
+		Failure of the authentification
+		ID of command: 201
+		Message: [ErrorMessage: char[64]]
+
+	- ROOM_DESCRIPTION
+		The server sends a room description
+		ID of command: 202
+		Message: [NameRoom:char[32]][NumberOfMaxPlayers:int][NumberofCurrentPlayers:int]
+				 [Difficulty:int][IDMap:int]
+		
+	- CREATE_ROOM_OK
+		Success of the room creation
+		ID of command: 203
+		Message: [empty]
+
+	- CREATE_ROOM_KO
+		Success of the room creation
+		ID of command: 204
+		Message: [ErrorMessage: char[64]]
+		
+	- JOIN_ROOM_OK
+		Success of entering in the room
+		ID of command: 205
+		Message: [empty]
+	
+	- JOIN_ROOM_KO
+		Failure of entering in the room
+		ID of command: 206
+		Message: [ErrorMessage: char[64]]
+	
+	- LEAVE_ROOM_OK
+		Success of leaving the room
+		ID of command: 207
+		Message: [empty]
+
+	- LEAVE_ROOM_KO
+		Failure of leaving the room
+		ID of command: 208
+		Message: [ErrorMessage: char[64]]
+		
+	- LAUNCH_GAME_OK
+		Success of launching the game
+		ID of command: 209
+		Message: [empty]
+
+	- LAUNCH_GAME_KO
+		Failure of launching the game
+		ID of command: 210
+		Message: [ErrorMessage: char[64]]
+		
+	 
+R-Type Group Project 	 			Standart Track								[Page 4]
+
+							Network Protocol for R-Type
+	 
+4.2.2		InGame commands - UDP
+
+	- START_GAME
+		The server launch the server
+		ID of command: 300
+		Message: [empty]
+	
+	- SPAWN_ENTITY
+		An entity has spawn on the map
+		ID of command: 301
+		Message: [IDEntity:int][IDType:int][PosX:int][PosY:int]
+	
+	- DESTROY_ENTITY
+		An entity is destroyed
+		ID of command: 302
+		Message: [IDEntity:int]
+		
+	- MOVE_ENTITY
+		An entity moves
+		ID of command: 303
+		Message: [IDEntity:int][PosX:int][PosY:int][MovementType:int]
+		
+	- LIFE_ENTITY
+		The server send the life of the entity
+		ID of command: 304
+		Message: [IDEntity:int][Life:int]
+	
+	- COLLISION
+		Not yet implemented
+		ID of command: 305
+		Message: Not yes implemented
+		
+	- DESCRIPTION_ENTITY
+		The server send the description of the entity
+		ID of command: 306
+		Message: [IDEntity: int][IDType: int][Life: int][PosX: int][PosY: int]
+		
+	- ENTITY_SCORE
+		The server sends the score of the entity
+		ID of command: 307
+		Message: [IDEntity: int][Score:int]
+		
+	- PLAYER_DISCONNECT
+		The server sends the player id who has just disconnected
+		ID of command: 308
+		Message: [IDEntity:int]
+		
+	- END_GAME
+		The game has ended
+		ID of command: 309
+		Message: [EndGameReason: char[64]]
+	
+	
+R-Type Group Project 	 			Standart Track								[Page 5]
+
+							Network Protocol for R-Type
+   
+5.	Internationalization Considerations
+
+	This document does not introduce or present any internationalization
+	or localization issues.
+	
+6.  Security Considerations
+
+	An injection of packets in UDP can harm the integrity of the system but it MUST
+	provide the right MAGIC code and the right CHECKSUM hash. And this is 0.0001%
+	likely to happen.
+
+7.  References
+
+	[RFC 2119]
+	[RFC 2223]
+
+8.  Authors' Addresses
+
+	R-Type Group Project
+	Epitech Toulouse
+	19 rue Bayard, 31000 Toulouse
