@@ -1,0 +1,5 @@
+/home/tolsa_c/EPITECH/tarballs/rtype-2015-tolsa_c/build/rtype-client/CMakeFiles/client.dir
+/home/tolsa_c/EPITECH/tarballs/rtype-2015-tolsa_c/build/rtype-server/CMakeFiles/server.dir
+/home/tolsa_c/EPITECH/tarballs/rtype-2015-tolsa_c/build/common/CMakeFiles/socket.dir
+/home/tolsa_c/EPITECH/tarballs/rtype-2015-tolsa_c/build/common/ThreadPool/CMakeFiles/thread.dir
+/home/tolsa_c/EPITECH/tarballs/rtype-2015-tolsa_c/build/rtype-server/Timer/CMakeFiles/timer.dir

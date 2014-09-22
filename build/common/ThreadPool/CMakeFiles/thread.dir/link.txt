@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../../../bin/libthread.a  CMakeFiles/thread.dir/ThreadPool.cpp.o CMakeFiles/thread.dir/Mutex.cpp.o CMakeFiles/thread.dir/UnixMutex.cpp.o CMakeFiles/thread.dir/UnixThread.cpp.o CMakeFiles/thread.dir/LockGuard.cpp.o
+/usr/bin/ranlib ../../../bin/libthread.a

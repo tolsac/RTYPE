@@ -1,0 +1,2 @@
+/usr/bin/ar cr libtimer.a  CMakeFiles/timer.dir/UnixTimer.cpp.o CMakeFiles/timer.dir/Clock.cpp.o
+/usr/bin/ranlib libtimer.a

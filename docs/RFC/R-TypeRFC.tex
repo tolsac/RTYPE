@@ -1,0 +1,605 @@
+%%
+%% R-TypeRFC.tex for R-TypeRFC in /home/nerevarine/Documents/rtype-2015-tolsa_c/docs
+%% 
+%% Made by Nerevarine
+%% Login   <nerevarine@epitech.net>
+%% 
+%% Started on  Sat Jan 19 22:20:20 2013 Nerevarine
+%% Last update Sun Jan 20 16:56:41 2013 Nerevarine
+%%
+
+\documentclass[a4 paper, 12pt]{report}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{a4}
+\usepackage[svgnames]{xcolor}
+\usepackage{color}
+\usepackage{fancybox}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{ucs}
+\usepackage[colorlinks=true,urlcolor=SlateBlue]{hyperref}
+\usepackage{url}
+\usepackage{arydshln}
+
+\newcommand{\email}[1]{\href{mailto:#1}{\nolinkurl{#1}}}
+\newcommand{\actionsuccess}[1]{\textcolor{DarkGreen}{#1}}
+\newcommand{\actionfailure}[1]{\textcolor{DarkRed}{#1}}
+
+
+\title{Network Protocol For R-Type}
+\author{Laurent Andral, Bertrand Boyer, Erick Clarivet\\
+Nataniel Martin, Clément Petit, Camille Tolsa}
+\date{\today}
+
+
+%Entete et pieds de page.
+\lhead{R-Type Group Project}
+\chead{Network Protocol}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+\pagestyle{fancy}
+
+\newcommand*{\plogo}{\includegraphics[height=2cm]{./Epitech.eps}} % Generic publisher logo
+
+%-------------------------------------------------------
+%TITLE PAGE
+%----------------------------------------------------------
+
+\newcommand*{\titleGM}{\begingroup % Create the command for including the title page in the document
+\hbox{ % Horizontal box
+\hspace*{0.2\textwidth} % Whitespace to the left of the title page
+\rule{1pt}{\textheight} % Vertical line
+\hspace*{0.05\textwidth} % Whitespace between the vertical line and title page text
+\parbox[b]{0.75\textwidth}{ % Paragraph box which restricts text to less than the width of the page
+
+{\noindent\Huge\bfseries Network Protocol \\[0.5\baselineskip] For R-Type}\\[2\baselineskip] % Title
+{\large \textit{\today}}\\[4\baselineskip] % Tagline or further description
+{\Large \textsc{Laurent Andral\\
+Bertrand Boyer\\
+Erick Clarivet\\
+Nataniel Martin\\
+Clément Petit\\
+Camille Tolsa}} % Author name
+
+\vspace{0.5\textheight} % Whitespace between the title block and the publisher
+{\noindent \plogo}%\\[\baselineskip] % Publisher and logo
+}}
+\endgroup}
+
+\begin{document}
+
+%\maketitle
+
+\thispagestyle{empty}
+\titleGM
+
+\tableofcontents
+%\listoftables
+\listoffigures
+
+\chapter{Introduction}
+This document describes the network protocol for R-Type Project.\\
+It describes how the clients and the server will communicate together.\\
+This protocol is only meant for the communation client-server type.
+
+\subsection*{Status of this memo}
+This document specifies a standart track protocol for the community of players. Distribution of this memo is unlimited.\\\\
+\underline{Copyright Notice}: This project is Open-Source.
+
+\subsection*{Conventions}
+The key words ``MUST'', ``MUST NOT'', ``REQUIRED'', ``SHALL'', ``SHALL NOT'', ``SHOULD'', ``SHOULD NOT'', ``RECOMMENDED'', ``MAY'', and ``OPTIONAL'' in this document are to be interpreted as described in [RFC2119].
+
+\subsection*{Internationalization considerations}
+This document does not introduce or present any internationalization or localization issues.
+
+\subsection*{Security considerations}
+An injection of packets in UDP can harm the integrity of the system but it MUST provide the right MAGIC code and the right CHECKSUM hash.\\
+And this is 0.0001\% likely to happen.
+
+
+\chapter{Protocol packet}
+
+\subsection*{Packet datagram}
+
+\begin{figure}[!Hh]
+  \centering
+  \begin{tabular}{p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}p{0.1cm}}
+    \multicolumn{8}{c}{0} & \multicolumn{8}{c}{1} & \multicolumn{8}{c}{2} & \multicolumn{8}{c}{3}\\
+    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7\\
+    \hline
+    \multicolumn{8}{|c|}{0xFE} & \multicolumn{8}{c|}{0xE1} & \multicolumn{8}{c|}{0xDE} & \multicolumn{8}{c|}{0xAD}\\
+    \hline
+    \multicolumn{32}{|c|}{Checksum}\\
+    \hline
+    \multicolumn{16}{|c|}{Command ID} & \multicolumn{16}{c|}{Data size}\\
+    \hline
+    \multicolumn{32}{|c|}{Data}\\
+    \multicolumn{32}{|c|}{}\\
+    \hdashline
+  \end{tabular}
+  \caption{R-Type packet's datagram.}
+\end{figure}
+
+\subsection*{Description}
+
+\begin{itemize}
+\item The first 32 bits are used as a magic number to make sure the packet is conform (uint32\_t).
+\item The next 32 bits, "Hashcode" to improve security of the packet and to check the packet integrity (uint32\_t).
+\item The next 32 bits are used to define the timestamp of the packet, in order to check if the packet is to old, irrelevant (uint32\_t).
+\item The next 16 bits are used for the ID command. It defines the incoming data pattern (uint16\_t).
+\item The next 16 bits are used for the Data Size (uint16\_t).
+\item The next XX bits defined by the data size are reserved for the strutured message.
+\end{itemize}
+
+\chapter{List of commands}
+This chapter presents all commands authorized between client and server communication. All unknown command will be ignored.
+
+\section{Client $\rightarrow$ server}
+\subsection{Menu commands - TCP}
+\begin{itemize}
+\item AUTHENTIFICATION
+  \begin{itemize}
+  \item The client wants to authentify.
+  \item ID of command: 000.
+  \item Message: [Login:char[32]].
+  \end{itemize}
+
+\item SHOW\_ROOM
+  \begin{itemize}
+  \item Request of the list of rooms.
+  \item ID of command: 001.
+  \item Message: [empty].
+  \end{itemize}
+
+\item CREATE\_ROOM
+  \begin{itemize}
+  \item The client creates a new room.
+  \item ID of command: 002.
+  \item Message: [NameRoom:char[32]][NumberOfMaxPlayers:int][Difficulty:int][IDMap:int].
+  \end{itemize}
+
+\item JOIN\_ROOM
+  \begin{itemize}
+  \item The client joins the room.
+  \item ID of command: 003.
+  \item Message: [NameRoom:char[32]].
+  \end{itemize}
+
+\newpage
+
+\item LEAVE\_ROOM
+  \begin{itemize}
+  \item The client leaves the room.
+  \item ID of command: 004.
+  \item Message: [empty].
+  \end{itemize}
+
+\item LAUNCH\_GAME
+  \begin{itemize}
+  \item The client, owner of the room, starts the game.
+  \item ID of command: 005.
+  \item Message: [NameRoom:char[32]].
+  \end{itemize}
+\end{itemize}
+
+\subsection{In game commands - UDP}
+\begin{itemize}
+\item MOVEMENT
+  \begin{itemize}
+  \item The client moves.
+  \item Id of command: 100.
+  \item Message: [MovementType:int].
+  \end{itemize}
+
+\item SHOOTING
+  \begin{itemize}
+  \item The client shoots.
+  \item ID of command: 101.
+  \item Message: [IDGun:int].
+  \end{itemize}
+
+\item ASK\_DESCRIBE\_ENTITY
+  \begin{itemize}
+  \item The client ask to describe an entity.
+  \item ID of command: 102.
+  \item Message: [IDEntity:int].
+  \end{itemize}
+
+\item ASK\_PLAYER\_SCORE
+  \begin{itemize}
+  \item The client ask a players' score.
+  \item ID of command: 103.
+  \item Message: [IDEntity:int].
+  \end{itemize}
+
+\item ASK\_PLAYER\_LIFE
+  \begin{itemize}
+  \item The client ask a players' life.
+  \item ID of command: 104.
+  \item Message: [IDEntity:int].
+  \end{itemize}
+\end{itemize}
+
+\section{Server $\rightarrow$ client}
+\subsection{Menu commands - TCP}
+
+\begin{itemize}
+\item AUTHENTIFICATION\_OK
+  \begin{itemize}
+  \item Success of the authentification.
+  \item ID of command: 200.
+  \item Message: [empty].
+  \end{itemize}
+
+\item AUTHENTIFICATION\_KO
+  \begin{itemize}
+  \item Failure of the authentification.
+  \item ID of command: 201.
+  \item Message: [ErrorMessageID:int].
+  \end{itemize}
+
+\item ROOM\_DESCRIPTION
+  \begin{itemize}
+  \item The server sends a room description.
+  \item ID of command: 202.
+  \item Message: [NameRoom:char[32]][NumberOfMaxPlayers:int]
+  \item[] [NumberOfCurrentPlayers:int][Difficulty:int][IDMap:int]
+  \end{itemize}
+
+\item ROOM\_PLAYER\_LIST
+  \begin{itemize}
+  \item The list of player's name in the room.
+  \item ID of the command: 203.
+  \item Message: [NameRoom:char[32]][Name1:char[32]]
+  \item[] [Name2:char[32]][Name3:char[32]][Name4:char[32]]
+  \end{itemize}
+
+\item CREATE\_ROOM\_OK
+  \begin{itemize}
+  \item Success of the room creation.
+  \item ID of command: 204.
+  \item Message: [empty].
+  \end{itemize}
+
+\item CREATE\_ROOM\_KO
+  \begin{itemize}
+  \item Success of the room creation.
+  \item ID of command: 205.
+  \item Message: [ErrorMessageID:int].
+  \end{itemize}
+
+\newpage
+
+\item JOIN\_ROOM\_OK
+  \begin{itemize}
+  \item Success of entering in the room.
+  \item ID of command: 206.
+  \item Message: [empty].
+  \end{itemize}
+
+\item JOIN\_ROOM\_KO
+  \begin{itemize}
+  \item Failure of entering in the room.
+  \item ID of command: 207.
+  \item Message: [ErrorMessageID:int].
+  \end{itemize}
+
+\item LEAVE\_ROOM\_OK
+  \begin{itemize}
+  \item Success of leaving the room.
+  \item ID of command: 208.
+  \item Message: [empty].
+  \end{itemize}
+
+\item LEAVE\_ROOM\_KO
+  \begin{itemize}
+  \item Failure of leaving the room.
+  \item ID of command: 209.
+  \item Message: [ErrorMessageID:int].
+  \end{itemize}
+
+\item LAUNCH\_GAME\_OK
+  \begin{itemize}
+  \item Success of launching the game.
+  \item ID of command: 210.
+  \item Message: [empty].
+  \end{itemize}
+
+\item LAUNCH\_GAME\_KO
+  \begin{itemize}
+  \item Failure of launching the game.
+  \item ID of command: 211.
+  \item Message: [ErrorMessageID:int].
+  \end{itemize}
+\end{itemize}
+
+\subsection{In game commands - UDP}
+\begin{itemize}
+\item START\_GAME
+  \begin{itemize}
+  \item The server launch the server.
+  \item ID of command: 300.
+  \item Message: [empty].
+  \end{itemize}
+
+\item SPAWN\_ENTITY
+  \begin{itemize}
+  \item An entity has spawn on the map.
+  \item ID of command: 301.
+  \item Message: [IDEntity:int][IDType:int][PosX:int][PosY:int].
+  \end{itemize}
+
+\item DESTROY\_ENTITY
+  \begin{itemize}
+  \item An entity is destroyed.
+  \item ID of command: 302.
+  \item Message: [IDEntity:int].
+  \end{itemize}
+
+\item MOVE\_ENTITY
+  \begin{itemize}
+  \item An entity moves.
+  \item ID of command: 303.
+  \item Message: [IDEntity:int][PosX:int][PosY:int][MovementType:int].
+  \end{itemize}
+
+\item LIFE\_ENTITY
+  \begin{itemize}
+  \item The server send the life of the entity.
+  \item ID of command: 304.
+  \item Message: [IDEntity:int][Life:int].
+  \end{itemize}
+
+\item COLLISION
+  \begin{itemize}
+  \item Collision between two entities.
+  \item ID of command: 305.
+  \item Message: [IDEntity1:int][IDEntity2:int].
+  \end{itemize}
+
+\item DESCRIPTION\_ENTITY
+  \begin{itemize}
+  \item The server send the description of the entity.
+  \item ID of command: 306.
+  \item Message: [IDEntity:int][IDType:int][Life:int][PosX:int][PosY:int].
+  \end{itemize}
+
+\item ENTITY\_SCORE
+  \begin{itemize}
+  \item The server sends the score of the entity.
+  \item ID of command: 307.
+  \item Message: [IDEntity: int][Score:int].
+  \end{itemize}
+
+\item PLAYER\_DISCONNECT
+  \begin{itemize}
+  \item The server sends the player id who has just disconnected.
+  \item ID of command: 308.
+  \item Message: [IDEntity:int].
+  \end{itemize}
+
+\item END\_GAME
+  \begin{itemize}
+  \item The game has ended.
+  \item ID of command: 309.
+  \item Message: [MessageID:int].
+  \end{itemize}
+\end{itemize}
+
+
+\chapter{Communication Client $\rightarrow$ Server}
+
+This section presents actions and reactions from client and server for each packets sent. And it also gives the mains reasons for eache sending.
+
+\section{TCP}
+
+\subsection{Actions and reactions}
+
+\begin{figure}[!Hh]
+  \begin{itemize}
+  \item \actionsuccess{Green} means the action succeed and \actionfailure{red} it failed.
+  \item n is the number of room on the server (in game or not).
+\end{itemize}
+
+\centering
+  \begin{tabular}{|l|l|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Action}} & \multicolumn{1}{c|}{\textbf{Reaction}}\\
+    \hline
+    \hline
+    \multirow{2}{*}{AUTHENTIFICATION} & \actionsuccess{AUTHENTIFICATION\_OK}\\
+    & \actionfailure{AUTHENTIFICATION\_KO}\\
+    \hline
+    \multirow{2}{*}{SHOW\_ROOM} & n * ROOM\_DESCRIPTION\\
+    & n * ROOM\_PLAYER\_LIST\\
+    \hline
+    \multirow{2}{*}{CREATE\_ROOM} & \actionsuccess{CREATE\_ROOM\_OK}\\
+    & \actionfailure{CREATE\_ROOM\_KO}\\
+    \hline
+    \multirow{2}{*}{JOIN\_ROOM} & \actionsuccess{JOIN\_ROOM\_OK}\\
+    & \actionfailure{JOIN\_ROOM\_KO}\\
+    \hline
+    \multirow{2}{*}{LEAVE\_ROOM} & \actionsuccess{LEAVE\_ROOM\_OK}\\
+    & \actionfailure{LEAVE\_ROOM\_KO}\\
+    \hline
+    \multirow{2}{*}{LAUNCH\_GAME} & \actionsuccess{LAUNCH\_ROOM\_OK}\\
+    & \actionfailure{LAUNCH\_ROOM\_KO}\\
+    \hline
+  \end{tabular}
+  \caption{Actions and reactions in TCP.}
+\end{figure}
+
+\subsection{Reasons}
+
+\begin{itemize}
+
+\item AUTHENTIFICATION
+  \begin{itemize}
+  \item Is the login already exist ?
+    \begin{itemize}
+    \item Yes $\rightarrow$ send AUTHENFICATION\_KO.
+    \item No $\rightarrow$ send AUTHENFICATION\_OK.
+    \end{itemize}
+  \end{itemize}
+
+\item SHOW\_ROOM
+  \begin{itemize}
+  \item For each room, send ROOM\_DESCRIPTION to the client.
+  \item For each room, send ROOM\_PLAYER\_LIST to the client.
+  \end{itemize}
+
+\item CREATE\_ROOM
+  \begin{itemize}
+  \item Is the room's name already exist ?
+    \begin{itemize}
+    \item Yes $\rightarrow$ send CREATE\_ROOM\_KO.
+    \item No $\rightarrow$ send CREATE\_ROOM\_OK.
+    \end{itemize}
+  \end{itemize}
+
+\item JOIN\_ROOM
+  \begin{itemize}
+  \item Is the room already in a game ?
+    \begin{itemize}
+    \item Yes $\rightarrow$ send JOIN\_ROOM\_KO.
+    \item No. Is the room full ?
+      \begin{itemize}
+      \item Yes $\rightarrow$ send JOIN\_ROOM\_KO.
+      \item No $\rightarrow$ send JOIN\_ROOM\_OK.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+
+\item LEAVE\_ROOM
+  \begin{itemize}
+    \item Send ROOM\_DESCRIPTION and ROOM\_PLAYER\_LIST to all players in the room.
+    \item Is the client the last in the room ?
+      \begin{itemize}
+        \item Yes $\rightarrow$ Delete the room (server side).
+      \end{itemize}
+  \end{itemize}
+
+\item LAUNCH\_ROOM
+  \begin{itemize}
+    \item Is the server ready for a new game ?
+      \begin{itemize}
+        \item Yes $\rightarrow$ send LAUNCH\_GAME\_OK to all players in the room.
+          \item No $\rightarrow$ send LAUNCH\_GAME\_KO to the client.
+      \end{itemize}
+  \end{itemize}
+
+
+\end{itemize}
+
+\newpage
+
+\section{UDP}
+
+\subsection{Actions and reactions}
+
+\begin{figure}[!Hh]
+  Here is only presented actions which have an answer from the server.\\
+
+  \centering
+  \begin{tabular}{|l|l|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Action}} & \multicolumn{1}{c|}{\textbf{Reaction}}\\
+    \hline
+    \hline
+    \multirow{2}{*}{MOVEMENT} & \multirow{2}{*}{MOVE\_ENTITY}\\
+    & \\
+    \hline
+    \multirow{2}{*}{SHOOTING} & \multirow{2}{*}{SPAWN\_ENTITY}\\
+    & \\
+    \hline
+    \multirow{2}{*}{ASK\_DESCRIBE\_ENTITY} & \multirow{2}{*}{DESCRIPTION\_ENTITY}\\
+    & \\
+    \hline
+    \multirow{2}{*}{ASK\_PLAYER\_SCORE} & \multirow{2}{*}{ENTITY\_SCORE}\\
+    & \\
+    \hline
+    \multirow{2}{*}{ASK\_PLAYER\_PLAYER\_LIFE} & \multirow{2}{*}{LIFE\_ENTITY}\\
+    & \\
+    \hline
+  \end{tabular}
+  \caption{Actions and reactions in UDP.}
+\end{figure}
+
+
+\begin{figure}[!Hh]
+  These events could be sent by the server without any request from the client.\\
+
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabularx}{15cm}{|l|X|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Event}} & \multicolumn{1}{c|}{\textbf{Reason}}\\
+    \hline
+    \hline
+    SPAWN\_ENTITY & A new entity spawn on the map.\\
+    \hline
+    DESTROY\_ENTITY & An entity disapears or is killed.\\
+    \hline
+    MOVE\_ENTITY & An entity is moving (e.g. a player is pressing a movement key).\\
+    \hline
+    LIFE\_ENTITY & An ennemy or the player has been shot.\\
+    \hline
+    COLLISION & Two entity are touching each other.\\
+    \hline
+    DESCRIPTION\_ENTITY & After a spawned entity, the server can send this entity description.\\
+    \hline
+    ENTITY\_SCORE & After an ennemy is killed, the new score is sent to display.\\
+    \hline
+    PLAYER\_DISCONNECTED & The player leaves the game, the client doesn't need to display it anymore.\\
+    \hline
+  \end{tabularx}
+  \caption{Events sent by the server.}
+\end{figure}
+
+
+\newpage
+
+\section{Order of actions}
+This part explains the order of actions for a game.
+
+\begin{figure}[!Hh]
+  \begin{center}
+    \includegraphics[height=13cm]{./ClientInRoom.eps}
+    \caption{Client side, before the game.}
+  \end{center}
+\end{figure}
+
+\chapter{References}
+
+[RFC 2119]
+\newline
+[RFC 2223]
+
+\chapter{Authors adresses}
+
+\begin{flushleft}
+\begin{tabular}{lll}
+  Laurent Andral & (andral\_l) & \email{laurent.andral@epitech.eu}\\
+  Bertrand Boyer & (boyer\_b) & \email{bertrand.boyer@epitech.eu}\\
+  Erick Clarivet & (clariv\_e) & \email{erick.clarivet@epitech.eu}\\
+  Nataniel Martin & (mart\_n) & \email{nataniel.martin@epitech.eu}\\
+  Clément Petit & (petit\_c) & \email{clement.petit@epitech.eu}\\
+  Camille Tolsa & (tolsa\_c) & \email{camille.tolsa@epitech.eu}\\
+\end{tabular}
+
+\vspace{0.7cm}
+
+R-Type Group Project\\
+Epitech Toulouse\\
+19 rue Bayard, 31000 Toulouse, France\\
+
+\end{flushleft}
+
+
+\end{document}
